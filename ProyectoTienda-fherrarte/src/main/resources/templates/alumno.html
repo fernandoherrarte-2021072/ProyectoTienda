@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi CV</title>
+
+    <!-- Fuente Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            padding: 40px;
+        }
+
+        .cv-container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            object-fit: cover;
+        }
+
+        h2 {
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            border-left: 4px solid #fff;
+            padding-left: 10px;
+        }
+
+        p, li {
+            font-size: 14px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        .logout {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .logout a {
+            color: #fff;
+            background: rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .logout a:hover {
+            background: rgba(255,255,255,0.6);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="cv-container">
+
+    <!-- Foto y nombre -->
+    <div class="header">
+        <img src="foto.jpg" alt="Mi Foto">
+        <h2>Fernando Eliseo Herrarte Pulex</h2>
+        <p>Estudiante - Desarrollador Junior</p>
+    </div>
+
+    <!-- Datos personales -->
+    <div class="section">
+        <h3 class="section-title">Datos Personales</h3>
+        <p><strong>Nombre: Fernando Eliseo Herrarte Pulex</strong>
+        <p><strong>Edad: 18</strong>
+        <p><strong>Email:fherrarte-2021072@kinal.edu.gt</strong>
+        <p><strong>Teléfono:59777751</strong>
+        <p><strong>Dirección: 1ra calle 7 Avenida "A" 1-55 Zona 2 Boca del Monte</strong> , Ciudad de Guatemala</p>
+    </div>
+
+    <!-- Estudios -->
+    <div class="section">
+        <h3 class="section-title">Datos de Estudio</h3>
+        <ul>
+            <li>Périto en Informática</li>
+            <li>Estudiante de Informática — Centro Educativo Técnico Laboral Kinal</li>
+            <li>Lenguajes: Java, Spring Boot, HTML/CSS, SQL, PSeInt
+        </ul>
+    </div>
+
+    <!-- Prácticas -->
+    <div class="section">
+        <h3 class="section-title">Datos de Práctica</h3>
+        <ul>
+            <li>Práctica profesional en Ceiba Software House</li>
+            <li>Practicante de Desarrollo de Software</li>
+            <li>Duración: 200 horas </li>
+        </ul>
+    </div>
+
+    <!-- Descripción -->
+    <div class="section">
+        <h3 class="section-title">Descripción</h3>
+        <p>
+            Soy un estudiante apasionado por la Informática y el desarrollo de software. Me interesa aprender constantemente y mejorar mis habilidades a través de la práctica y la participación en proyectos.
+            Cuento con conocimientos básicos en programación, desarrollo web y manejo de bases de datos. Me adapto fácilmente al trabajo en equipo y tengo disposición para aprender nuevas herramientas y tecnologías.
+            por ello me gusta ir a lugares en donde pueda adquirir experiencia, fortalecer mis habilidades y aportar de manera positiva al equipo.
+        </p>
+    </div>
+
+    <!-- Botón de cerrar sesión -->
+    <div class="logout">
+        <a href="/usuario">Cerrar sesión</a>
+    </div>
+
+</div>
+
+</body>
+</html>
