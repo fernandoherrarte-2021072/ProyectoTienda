@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Tienda</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="login-container">
+    <h2>Crear Cuenta</h2>
+
+    <form th:action="@{/login}" method="get">
+        <div class="input-group">
+            <label for="reg-usuario">Usuario:</label>
+            <input type="text" id="reg-usuario" name="usuario" required>
+        </div>
+
+        <div class="input-group">
+            <label for="reg-password">Contraseña:</label>
+            <input type="password" id="reg-password" name="password" required>
+        </div>
+
+        <div class="input-group">
+            <label for="confirm-password">Confirmar Contraseña:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+
+        <button type="submit" class="btn-login" style="background-color: #007bff;">Registrarse</button>
+    </form>
+
+    <div class="footer-links">
+        <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+    </div>
+</div>
+</body>
+</html>
