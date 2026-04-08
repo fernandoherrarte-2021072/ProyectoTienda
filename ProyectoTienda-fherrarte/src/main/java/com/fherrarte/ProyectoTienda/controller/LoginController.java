@@ -10,41 +10,57 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
-    //inicio login
+
     @GetMapping("/")
-    public String inicio(){ return "redirect:/usuario";}
+    public String inicio() {
+        return "redirect:/login";
+    }
 
-    // Mostrar Login
-    @GetMapping("/usuario")
-    public String mostrarLogin() { return "usuario";}
 
-    //procesar Login
+    @GetMapping("/login")
+    public String mostrarLogin() {
+        return "login";
+    }
+
+
     @PostMapping("/login")
-    public String login (@RequestParam String usuario,
+    public String login(@RequestParam String usuario,
                         @RequestParam String password,
                         HttpSession session,
-                        Model model)    {
-       String userCorrecto = "admin";
-       String passCorrecto = "1234";
+                        Model model) {
 
-       if (usuario.equals(userCorrecto) && password.equals(passCorrecto)){
-           // guardar sesion
-           session.setAttribute("usuarioLogueado", usuario);
-           return "redirect:/alumno";
+        String userCorrecto = "admin";
+        String passCorrecto = "1234";
 
-
-       }else{
-           model.addAttribute("error", "usuario y contrasena incorrecta");
-           return "usuario";
-       }
-    }
-    //proteger ruta sin SpringSecurity
-    @GetMapping("/alumno")
-    public String mostrarAlumno(HttpSession session){
-        //Validar la sesion
-        if(session.getAttribute("usuarioLogueado") ==null){
-            return "redirect:/usuario";
+        if (usuario.equals(userCorrecto) && password.equals(passCorrecto)) {
+            session.setAttribute("usuarioLogueado", usuario);
+            return "redirect:/home";
+        } else {
+            model.addAttribute("error", "Usuario o contraseña incorrectos");
+            return "login";
         }
-        return "alumno";
+    }
+
+
+    @GetMapping("/home")
+    public String mostrarHome(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "home";
+    }
+
+
+    @GetMapping("/registrarse")
+    public String mostrarRegistro() {
+        return "registrarse";
+    }
+
+    // Cerrar sesión
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
     }
 }
+
