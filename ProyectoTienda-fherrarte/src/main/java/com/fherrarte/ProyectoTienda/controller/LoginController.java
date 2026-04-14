@@ -62,5 +62,17 @@ public class LoginController {
         session.invalidate();
         return "redirect:/login";
     }
+
+
+    @GetMapping("/ventas")
+    public String mostrarVentas(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "ventas"; // Esto cargará templates/ventas.html
+    }
+
+
+
 }
 
