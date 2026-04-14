@@ -86,5 +86,12 @@ public class LoginController {
         }
         return "detalles";
     }
+    @GetMapping("/usuarios")
+    public String mostrarUsuarios(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "usuarios";
+    }
 }
 
