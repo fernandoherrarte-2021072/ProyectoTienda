@@ -64,14 +64,6 @@ public class LoginController {
     }
 
 
-    @GetMapping("/ventas")
-    public String mostrarVentas(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-        return "ventas";
-    }
-
     @GetMapping("/productos")
     public String mostrarProductos(HttpSession session) {
         if (session.getAttribute("usuarioLogueado") == null) {
@@ -93,12 +85,7 @@ public class LoginController {
         }
         return "usuarios";
     }
-    @GetMapping("/clientes")
-    public String mostrarClientes(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-        return "clientes";
+
     }
-}
+
 
