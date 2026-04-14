@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Usuarios - Tienda</title>
+  <link rel="stylesheet" th:href="@{/css/entidades.css}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-logo">Tienda - Usuarios</div>
+  <div>
+    <a th:href="@{/home}" style="color: white; margin-right: 15px; text-decoration: none;">Volver al Home</a>
+    <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Control de Usuarios</h1>
+
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <p>Administración de cuentas y roles del sistema</p>
+    <a href="#" class="btn-add">Nuevo Usuario</a>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Código</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Rol</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>1</td>
+      <td>admin</td>
+      <td>admin@tienda.com</td>
+      <td>ADMINISTRADOR</td>
+      <td><span style="color: green;">Activo</span></td>
+      <td>
+        <a href="#" class="btn-edit">Editar</a>
+        <a href="#" class="btn-delete">Eliminar</a>
+      </td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>vendedor01</td>
+      <td>vendedor@tienda.com</td>
+      <td>VENDEDOR</td>
+      <td><span style="color: green;">Activo</span></td>
+      <td>
+        <a href="#" class="btn-edit">Editar</a>
+        <a href="#" class="btn-delete">Eliminar</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
