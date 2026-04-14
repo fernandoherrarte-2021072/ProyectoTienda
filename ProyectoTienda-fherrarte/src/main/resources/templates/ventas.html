@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ventas - Proyecto</title>
+    <link rel="stylesheet" th:href="@{/css/entidades.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-logo">Sistema Tienda</div>
+    <div>
+        <a th:href="@{/home}" style="color: white; margin-right: 15px; text-decoration: none;">Volver al Home</a>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Gestión de Ventas</h1>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <p>Listado de transacciones registradas</p>
+        <a href="#" class="btn-add">Nueva Venta</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>DPI Cliente</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1001</td>
+            <td>2024-05-20</td>
+            <td>Q 150.00</td>
+            <td><span style="color: green;">Activa</span></td>
+            <td>300512345</td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        <tr>
+            <td>1002</td>
+            <td>2024-05-21</td>
+            <td>Q 2,500.00</td>
+            <td><span style="color: green;">Activa</span></td>
+            <td>123456789</td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
