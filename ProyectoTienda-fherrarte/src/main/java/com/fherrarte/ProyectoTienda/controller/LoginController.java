@@ -69,10 +69,16 @@ public class LoginController {
         if (session.getAttribute("usuarioLogueado") == null) {
             return "redirect:/login";
         }
-        return "ventas"; // Esto cargará templates/ventas.html
+        return "ventas";
     }
 
-
+    @GetMapping("/productos")
+    public String mostrarProductos(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "productos";
+    }
 
 }
 
