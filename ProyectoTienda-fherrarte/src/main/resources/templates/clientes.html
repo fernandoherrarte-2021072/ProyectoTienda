@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes - Tienda</title>
+    <link rel="stylesheet" th:href="@{/css/entidades.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-logo">Tienda - Clientes</div>
+    <div>
+        <a th:href="@{/home}" style="color: white; margin-right: 15px; text-decoration: none;">Volver al Home</a>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Cartera de Clientes</h1>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <p>Listado de clientes registrados en el sistema</p>
+        <a href="#" class="btn-add">Nuevo Cliente</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>DPI</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Dirección</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>3005123450101</td>
+            <td>Juan Carlos</td>
+            <td>Pérez López</td>
+            <td>Ciudad de Guatemala, Zona 10</td>
+            <td><span style="color: green;">Activo</span></td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        <tr>
+            <td>1998543210101</td>
+            <td>María Fernanda</td>
+            <td>García Sosa</td>
+            <td>Antigua Guatemala, Sacatepéquez</td>
+            <td><span style="color: green;">Activo</span></td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
