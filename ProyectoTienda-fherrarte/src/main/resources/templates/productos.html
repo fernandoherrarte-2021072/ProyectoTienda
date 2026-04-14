@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario de Productos</title>
+    <link rel="stylesheet" th:href="@{/css/entidades.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-logo">Tienda - Inventario</div>
+    <div>
+        <a th:href="@{/home}" style="color: white; margin-right: 15px; text-decoration: none;">Volver al Home</a>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Gestión de Productos</h1>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <p>Control de existencias y precios</p>
+        <a href="#" class="btn-add">Agregar Producto</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>Laptop Gamer Pro</td>
+            <td>Q 12,500.00</td>
+            <td>15</td>
+            <td><span style="color: green;">Disponible</span></td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Mouse Inalámbrico</td>
+            <td>Q 250.00</td>
+            <td>50</td>
+            <td><span style="color: green;">Disponible</span></td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Teclado Mecánico RGB</td>
+            <td>Q 850.00</td>
+            <td>0</td>
+            <td><span style="color: red;">Agotado</span></td>
+            <td>
+                <a href="#" class="btn-edit">Editar</a>
+                <a href="#" class="btn-delete">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
