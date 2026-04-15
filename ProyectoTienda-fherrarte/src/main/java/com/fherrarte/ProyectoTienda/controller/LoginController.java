@@ -63,7 +63,27 @@ public class LoginController {
         return "redirect:/login";
     }
 
-
+    @GetMapping("/clientes")
+    public String mostrarClientes(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "clientes";
+    }
+    @GetMapping("/ventas")
+    public String mostrarVentas(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "ventas";
+    }
+    @GetMapping("/usuarios")
+    public String mostrarUsuarios(HttpSession session) {
+        if (session.getAttribute("usuarioLogueado") == null) {
+            return "redirect:/login";
+        }
+        return "usuarios";
+    }
     @GetMapping("/productos")
     public String mostrarProductos(HttpSession session) {
         if (session.getAttribute("usuarioLogueado") == null) {
@@ -77,13 +97,6 @@ public class LoginController {
             return "redirect:/login";
         }
         return "detalles";
-    }
-    @GetMapping("/usuarios")
-    public String mostrarUsuarios(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-        return "usuarios";
     }
 
     }
