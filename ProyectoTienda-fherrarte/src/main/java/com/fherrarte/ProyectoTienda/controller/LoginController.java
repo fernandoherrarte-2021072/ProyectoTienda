@@ -18,19 +18,17 @@ public class LoginController {
         this.usuarioService = usuarioService;
     }
 
-    // REDIRECCIÓN INICIAL
+    //login
     @GetMapping("/")
     public String inicio() {
         return "redirect:/login";
     }
 
-    // MOSTRAR LOGIN
     @GetMapping("/login")
     public String mostrarLogin() {
-        return "login"; // login.html
+        return "login";
     }
 
-    // PROCESAR LOGIN (BASE DE DATOS)
     @PostMapping("/login")
     public String login(@RequestParam String usuario,
                         @RequestParam String password,
@@ -50,22 +48,27 @@ public class LoginController {
         return "login";
     }
 
-    // MOSTRAR HOME
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
+
+    // home
     @GetMapping("/home")
     public String mostrarHome(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
+        if (!usuarioLogueado(session)) {
             return "redirect:/login";
         }
         return "home";
     }
 
-    // MOSTRAR REGISTRO
+    // registro
     @GetMapping("/registrarse")
     public String mostrarRegistro() {
-        return "registrarse"; // registrarse.html
+        return "registrarse";
     }
 
-    // PROCESAR REGISTRO (BASE DE DATOS)
     @PostMapping("/registrarse")
     public String registrar(@RequestParam String usuario,
                             @RequestParam String password,
@@ -82,54 +85,49 @@ public class LoginController {
         return "redirect:/login";
     }
 
-    // CERRAR SESIÓN
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
-    }
-
-    // ===== VISTAS DEL SISTEMA (PROTEGIDAS) =====
-
-    @GetMapping("/clientes")
-    public String mostrarClientes(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-        return "clientes";
-    }
-
-    @GetMapping("/ventas")
-    public String mostrarVentas(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
-        return "ventas";
-    }
+    // vistas por rol
 
     @GetMapping("/usuarios")
     public String mostrarUsuarios(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
+        if (!usuarioLogueado(session)) return "redirect:/login";
+        if (!esAdmin(session)) return "redirect:/home";
         return "usuarios";
+    }
+
+    @GetMapping("/clientes")
+    public String mostrarClientes(HttpSession session) {
+        if (!usuarioLogueado(session)) return "redirect:/login";
+        return "clientes";
     }
 
     @GetMapping("/productos")
     public String mostrarProductos(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
+        if (!usuarioLogueado(session)) return "redirect:/login";
         return "productos";
     }
 
+
+    @GetMapping("/ventas")
+    public String mostrarVentas(HttpSession session) {
+        if (!usuarioLogueado(session)) return "redirect:/login";
+        return "ventas";
+    }
+
+
     @GetMapping("/detalles")
     public String mostrarDetalles(HttpSession session) {
-        if (session.getAttribute("usuarioLogueado") == null) {
-            return "redirect:/login";
-        }
+        if (!usuarioLogueado(session)) return "redirect:/login";
         return "detalles";
     }
+
+    private boolean usuarioLogueado(HttpSession session) {
+        return session.getAttribute("usuarioLogueado") != null;
+    }
+
+    private boolean esAdmin(HttpSession session) {
+        return "ADMIN".equals(session.getAttribute("rol"));
+    }
 }
+
 
 
