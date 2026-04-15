@@ -3,7 +3,6 @@ package com.fherrarte.ProyectoTienda.service;
 import com.fherrarte.ProyectoTienda.entity.Cliente;
 import com.fherrarte.ProyectoTienda.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -21,7 +20,7 @@ public class ClienteServiceImplements implements ClienteService {
     }
 
     @Override
-    public Cliente getClienteById(Integer dpi) {
+    public Cliente getClienteById(String dpi) { // Cambiado a String
         return clienteRepository.findById(dpi).orElse(null);
     }
 
@@ -31,10 +30,11 @@ public class ClienteServiceImplements implements ClienteService {
     }
 
     @Override
-    public Cliente updateCliente(Integer dpi, Cliente cliente) {
+    public Cliente updateCliente(String dpi, Cliente cliente) { // Cambiado a String
         Cliente clienteExistente = clienteRepository.findById(dpi).orElse(null);
 
         if (clienteExistente != null) {
+            // Aseguramos que el DPI del objeto cliente sea el que viene por parámetro
             cliente.setDpiCliente(dpi);
             return clienteRepository.save(cliente);
         }
@@ -43,7 +43,7 @@ public class ClienteServiceImplements implements ClienteService {
     }
 
     @Override
-    public void deleteCliente(Integer dpi) {
+    public void deleteCliente(String dpi) { // Cambiado a String
         clienteRepository.deleteById(dpi);
     }
 }
