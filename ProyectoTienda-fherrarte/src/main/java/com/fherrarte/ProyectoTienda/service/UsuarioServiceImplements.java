@@ -15,6 +15,8 @@ public class UsuarioServiceImplements implements UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    // ===== CRUD EXISTENTE (NO SE TOCA) =====
+
     @Override
     public List<Usuario> getAllUsuarios() {
         return usuarioRepository.findAll();
@@ -38,12 +40,40 @@ public class UsuarioServiceImplements implements UsuarioService {
             usuario.setCodigoUsuario(id);
             return usuarioRepository.save(usuario);
         }
-
         return null;
     }
 
     @Override
     public void deleteUsuario(Integer id) {
         usuarioRepository.deleteById(id);
+    }
+
+    // ===== NUEVA LÓGICA: LOGIN =====
+
+    @Override
+    public Usuario login(String username, String password) {
+        return usuarioRepository
+                .findByUsernameAndPassword(username.trim(), password.trim())
+                .orElse(null);
+    }
+
+    // ===== NUEVA LÓGICA: REGISTRO =====
+
+    @Override
+    public Usuario registrar(String username, String password) {
+
+        String user = username.trim();
+
+        if (usuarioRepository.findByUsername(user).isPresent()) {
+            return null;
+        }
+
+        Usuario nuevo = new Usuario();
+        nuevo.setUsername(user);
+        nuevo.setPassword(password.trim());
+        nuevo.setRol("VENDEDOR");
+        nuevo.setEstado(1);
+
+        return usuarioRepository.save(nuevo);
     }
 }
