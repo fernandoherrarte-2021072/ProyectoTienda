@@ -15,7 +15,7 @@ public class UsuarioServiceImplements implements UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // ===== CRUD EXISTENTE (NO SE TOCA) =====
+
 
     @Override
     public List<Usuario> getAllUsuarios() {
@@ -48,7 +48,7 @@ public class UsuarioServiceImplements implements UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    // ===== NUEVA LÓGICA: LOGIN =====
+
 
     @Override
     public Usuario login(String username, String password) {
@@ -57,7 +57,7 @@ public class UsuarioServiceImplements implements UsuarioService {
                 .orElse(null);
     }
 
-    // ===== NUEVA LÓGICA: REGISTRO =====
+
 
     @Override
     public Usuario registrar(String username, String password) {

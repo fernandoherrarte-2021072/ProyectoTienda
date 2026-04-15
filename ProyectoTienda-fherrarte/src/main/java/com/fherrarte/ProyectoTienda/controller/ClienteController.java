@@ -36,7 +36,7 @@ public class ClienteController {
 
     @PutMapping("/{dpi}")
     public ResponseEntity<Object> updateCliente(
-            @PathVariable Integer dpi,
+            @PathVariable String dpi, // Cambiado de Integer a String
             @Valid @RequestBody Cliente clienteRequest) {
         try {
             Cliente updated = clienteService.updateCliente(dpi, clienteRequest);
@@ -49,7 +49,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{dpi}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Integer dpi) {
+    public ResponseEntity<Void> deleteCliente(@PathVariable String dpi) { // Cambiado de Integer a String
         clienteService.deleteCliente(dpi);
         return ResponseEntity.noContent().build();
     }
