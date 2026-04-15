@@ -19,6 +19,14 @@
 
     <div class="user-info">
         <span>Bienvenido, <strong th:text="${session.usuarioLogueado}">Usuario</strong></span>
+        <img th:if="${session.rol == 'ADMIN'}"
+             th:src="@{/img/foto.jpg}"
+             alt="Foto Admin"
+             style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; vertical-align: middle;">
+        <img th:if="${session.rol != 'ADMIN'}"
+             th:src="@{/img/icono.png}"
+             alt="Icono Usuario"
+             style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; vertical-align: middle;">
         <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
     </div>
 </nav>
