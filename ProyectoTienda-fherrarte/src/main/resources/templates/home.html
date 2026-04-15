@@ -3,43 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Mi Tienda</title>
-    <link rel="stylesheet" th:href="@{/css/StyleHome.css}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/StyleHome.css?v=2.1}">
 </head>
 <body>
 <nav class="navbar">
-    <div class="nav-logo">Sistema de Ventas</div>
-    <div class="nav-user">
+    <div class="brand-container">
+        <img th:src="@{/img/logo.png}" alt="Logo" class="nav-logo">
+        <h1>Sistema de Ventas</h1>
+    </div>
+
+    <div class="user-info">
         <span>Bienvenido, <strong th:text="${session.usuarioLogueado}">Usuario</strong></span>
         <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
     </div>
 </nav>
 
 <div class="main-content">
-    <h1>Panel de Control</h1>
+    <h2>Panel de Control</h2>
     <p>Selecciona una vista para gestionar:</p>
 
     <div class="dashboard-grid">
         <div class="card">
+            <img th:src="@{/img/Ventas.png}" alt="Ventas" class="card-icon">
             <h3>Ventas</h3>
             <p>Gestión de transacciones y facturación.</p>
             <a th:href="@{/ventas}" class="btn-manage">Gestionar</a>
         </div>
+
         <div class="card">
+            <img th:src="@{/img/Productos.png}" alt="Productos" class="card-icon">
             <h3>Productos</h3>
             <p>Gestión de inventario y precios.</p>
             <a th:href="@{/productos}" class="btn-manage">Gestionar</a>
         </div>
+
         <div class="card">
+            <img th:src="@{/img/DetalleVenta.png}" alt="Detalles" class="card-icon">
             <h3>Detalles de Venta</h3>
             <p>Desglose de productos por cada venta realizada.</p>
             <a th:href="@{/detalles}" class="btn-manage">Gestionar</a>
         </div>
+
         <div class="card">
+            <img th:src="@{/img/Usuarios.png}" alt="Usuarios" class="card-icon">
             <h3>Usuarios</h3>
             <p>Administración de accesos, roles y perfiles.</p>
             <a th:href="@{/usuarios}" class="btn-manage">Gestionar</a>
         </div>
+
         <div class="card">
+            <img th:src="@{/img/Clientes.png}" alt="Clientes" class="card-icon">
             <h3>Clientes</h3>
             <p>Gestión de datos personales y direcciones de clientes.</p>
             <a th:href="@{/clientes}" class="btn-manage">Gestionar</a>
