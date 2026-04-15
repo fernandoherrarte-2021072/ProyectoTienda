@@ -1,16 +1,35 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Ventas</title>
-    <link rel="stylesheet" th:href="@{/css/entidades.css}">
+    <link rel="stylesheet" href="/css/entidades.css">
 </head>
 <body>
 
 <div class="container">
 
-    <h2>Listado de Ventas</h2>
+    <h2>Gestión de Ventas</h2>
 
+    <!-- FORMULARIO -->
+    <div class="form">
+        <input id="fechaVenta" type="date" placeholder="Fecha">
+        <input id="total" type="number" step="0.01" placeholder="Total">
+        <input id="estado" type="number" placeholder="Estado">
+        <input id="dpiCliente" type="number" placeholder="DPI Cliente">
+        <input id="codigoUsuario" type="number" placeholder="Código Usuario">
+
+        <div style="margin-top:10px">
+            <button class="btn-add" onclick="agregar()">Agregar</button>
+            <button class="btn-edit" onclick="editar()">Editar</button>
+            <button class="btn-delete" onclick="eliminar()">Eliminar</button>
+            <button onclick="limpiar()">Limpiar</button>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- TABLA -->
     <table>
         <thead>
         <tr>
@@ -20,69 +39,128 @@
             <th>Estado</th>
             <th>DPI Cliente</th>
             <th>Código Usuario</th>
-            <th>Acciones</th>
         </tr>
         </thead>
-
-        <tbody>
-        <tr th:each="v : ${ventas}">
-            <td th:text="${v.codigoVenta}"></td>
-            <td th:text="${v.fechaVenta}"></td>
-            <td th:text="${v.total}"></td>
-            <td th:text="${v.estado}"></td>
-            <td th:text="${v.dpiCliente}"></td>
-            <td th:text="${v.codigoUsuario}"></td>
-            <td>
-                <a class="btn-edit" th:href="@{/ventas/editar/{id}(id=${v.codigoVenta})}">Editar</a>
-
-                <a class="btn-delete"
-                   th:href="@{/ventas/eliminar/{id}(id=${v.codigoVenta})}"
-                   onclick="return confirm('¿Eliminar venta?')">Eliminar</a>
-            </td>
-        </tr>
-        </tbody>
+        <tbody id="tabla"></tbody>
     </table>
 
-    <hr>
-
-    <h2 th:text="${venta != null and venta.codigoVenta == null ? 'Nueva Venta' : 'Editar Venta'}"></h2>
-
-    <form th:action="@{/ventas/guardar}" th:object="${venta}" method="post">
-
-        <input type="hidden" th:field="*{codigoVenta}"/>
-
-        <div>
-            <label>Fecha</label>
-            <input type="date" th:field="*{fechaVenta}" required>
-        </div>
-
-        <div>
-            <label>Total</label>
-            <input type="number" step="0.01" th:field="*{total}" required>
-        </div>
-
-        <div>
-            <label>Estado</label>
-            <input type="number" th:field="*{estado}" required>
-        </div>
-
-        <div>
-            <label>DPI Cliente</label>
-            <input type="number" th:field="*{dpiCliente}" required>
-        </div>
-
-        <div>
-            <label>Código Usuario</label>
-            <input type="number" th:field="*{codigoUsuario}" required>
-        </div>
-
-        <button type="submit" class="btn-add">Guardar</button>
-    </form>
-
     <br>
-    <a th:href="@{/home}">Volver al Home</a>
+    <a href="/home">Volver al Home</a>
 
 </div>
 
+<script>
+    let ventaSeleccionada = null;
+
+    // LISTAR
+    async function cargar() {
+        const res = await fetch("/api/ventas");
+        const data = await res.json();
+
+        const tabla = document.getElementById("tabla");
+        tabla.innerHTML = "";
+
+        data.forEach(v => {
+            tabla.innerHTML += `
+                <tr onclick="seleccionar(${v.codigoVenta},
+                                         '${v.fechaVenta}',
+                                         ${v.total},
+                                         ${v.estado},
+                                         ${v.dpiCliente},
+                                         ${v.codigoUsuario})"
+                    style="cursor:pointer">
+                    <td>${v.codigoVenta}</td>
+                    <td>${v.fechaVenta}</td>
+                    <td>${v.total}</td>
+                    <td>${v.estado}</td>
+                    <td>${v.dpiCliente}</td>
+                    <td>${v.codigoUsuario}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function seleccionar(id, fecha, total, estado, dpi, usuario) {
+        ventaSeleccionada = id;
+        document.getElementById("fechaVenta").value = fecha;
+        document.getElementById("total").value = total;
+        document.getElementById("estado").value = estado;
+        document.getElementById("dpiCliente").value = dpi;
+        document.getElementById("codigoUsuario").value = usuario;
+    }
+
+    function limpiar() {
+        ventaSeleccionada = null;
+        document.querySelectorAll(".form input").forEach(i => i.value = "");
+    }
+
+    // POST
+    async function agregar() {
+    const venta = {
+        fechaVenta: document.getElementById("fechaVenta").value,
+        total: document.getElementById("total").value,
+        estado: document.getElementById("estado").value,
+        dpiCliente: document.getElementById("dpiCliente").value,
+        codigoUsuario: 1   // 🔴 FIX TEMPORAL
+    };
+
+    await fetch("/api/ventas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(venta)
+    });
+
+    limpiar();
+    cargar();
+}
+
+
+    // PUT
+    async function editar() {
+        if (!ventaSeleccionada) {
+            alert("Selecciona una venta");
+            return;
+        }
+
+        const venta = {
+            codigoVenta: ventaSeleccionada,
+            fechaVenta: document.getElementById("fechaVenta").value,
+            total: document.getElementById("total").value,
+            estado: document.getElementById("estado").value,
+            dpiCliente: document.getElementById("dpiCliente").value,
+            codigoUsuario: document.getElementById("codigoUsuario").value
+        };
+
+        await fetch(`/api/ventas/${ventaSeleccionada}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(venta)
+        });
+
+        limpiar();
+        cargar();
+    }
+
+    // DELETE
+    async function eliminar() {
+        if (!ventaSeleccionada) {
+            alert("Selecciona una venta");
+            return;
+        }
+
+        if (confirm("¿Eliminar venta?")) {
+            await fetch(`/api/ventas/${ventaSeleccionada}`, {
+                method: "DELETE"
+            });
+            limpiar();
+            cargar();
+        }
+    }
+
+    // Inicial
+    cargar();
+</script>
+
 </body>
 </html>
+``
