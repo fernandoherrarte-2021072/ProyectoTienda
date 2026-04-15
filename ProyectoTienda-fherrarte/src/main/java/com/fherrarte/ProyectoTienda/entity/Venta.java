@@ -21,7 +21,7 @@ public class Venta {
     private Integer estado;
 
     @Column(name = "clientes_dpi_cliente")
-    private Integer dpiCliente;
+    private String dpiCliente; // Cambiado de Integer a String para soportar los 13 dígitos
 
     @Column(name = "usuarios_codigo_usuario")
     private Integer codigoUsuario;
@@ -59,11 +59,11 @@ public class Venta {
         this.estado = estado;
     }
 
-    public Integer getDpiCliente() {
+    public String getDpiCliente() { // Getter actualizado
         return dpiCliente;
     }
 
-    public void setDpiCliente(Integer dpiCliente) {
+    public void setDpiCliente(String dpiCliente) { // Setter actualizado
         this.dpiCliente = dpiCliente;
     }
 
