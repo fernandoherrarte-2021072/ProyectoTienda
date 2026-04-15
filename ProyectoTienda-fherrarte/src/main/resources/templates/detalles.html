@@ -139,7 +139,7 @@
       };
 
       if(!detalle.codigoVenta || !detalle.cantidad) {
-          alert("⚠️ Por favor completa los campos de Venta y Cantidad");
+          alert("Por favor completa los campos de Venta y Cantidad");
           return;
       }
 
@@ -154,14 +154,14 @@
           cargar();
       } else {
           const txt = await response.text();
-          alert("❌ Error: " + txt);
+          alert("Error: " + txt);
       }
   }
 
   // --- EDITAR (PUT) ---
   async function editar() {
       if (!detalleSeleccionado) {
-          alert("⚠️ Selecciona un detalle de la tabla");
+          alert("Selecciona un detalle de la tabla");
           return;
       }
 
@@ -186,7 +186,7 @@
   // --- ELIMINAR (DELETE) ---
   async function eliminar() {
       if (!detalleSeleccionado) {
-          alert("⚠️ Selecciona un detalle para eliminar");
+          alert("Porfavor selecciona un detalle para eliminar");
           return;
       }
 

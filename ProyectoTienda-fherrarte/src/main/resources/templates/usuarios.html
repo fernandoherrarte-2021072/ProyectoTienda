@@ -76,7 +76,7 @@
 <script>
   let usuarioSeleccionado = null;
 
-  // --- LISTAR ---
+  // --- Listar ---
   async function cargar() {
       try {
           const res = await fetch("/api/usuarios");
@@ -110,7 +110,7 @@
       }
   }
 
-  // --- SELECCIONAR ---
+  // --- Seleccionar ---
   function seleccionar(elemento, id, username, password, email, rol, estado) {
       document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
       elemento.classList.add("selected-row");
@@ -124,14 +124,14 @@
       document.getElementById("estado").value = estado;
   }
 
-  // --- LIMPIAR ---
+  // --- Limpiar ---
   function limpiar() {
       usuarioSeleccionado = null;
       document.querySelectorAll(".form input").forEach(i => i.value = "");
       document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
   }
 
-  // --- AGREGAR (POST) ---
+  // --- Agregar ---
   async function agregar() {
       const user = {
           username: document.getElementById("usuario").value,
@@ -142,7 +142,7 @@
       };
 
       if(!user.username || !user.password) {
-          alert("⚠️ Usuario y Contraseña son campos obligatorios");
+          alert(" Usuario y Contraseña son campos obligatorios");
           return;
       }
 
@@ -156,10 +156,10 @@
       cargar();
   }
 
-  // --- EDITAR (PUT) ---
+  // --- Editar ---
   async function editar() {
       if (!usuarioSeleccionado) {
-          alert("⚠️ Selecciona un usuario de la tabla para editar");
+          alert("️ Selecciona un usuario de la tabla para editar");
           return;
       }
 
@@ -182,10 +182,10 @@
       cargar();
   }
 
-  // --- ELIMINAR (DELETE) ---
+  // --- Eliminar ---
   async function eliminar() {
       if (!usuarioSeleccionado) {
-          alert("⚠️ Selecciona un usuario para eliminar");
+          alert("️ Selecciona un usuario para eliminar");
           return;
       }
 

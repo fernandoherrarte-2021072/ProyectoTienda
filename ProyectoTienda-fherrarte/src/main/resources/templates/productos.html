@@ -75,7 +75,7 @@
 <script>
     let productoSeleccionado = null;
 
-    // --- LISTAR ---
+    // --- Listar ---
     async function cargar() {
         try {
             const res = await fetch("/api/productos");
@@ -109,7 +109,7 @@
         }
     }
 
-    // --- SELECCIONAR ---
+    // --- Seleccionar ---
     function seleccionar(elemento, id, nombre, precio, stock, estado) {
         document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
         elemento.classList.add("selected-row");
@@ -122,14 +122,14 @@
         document.getElementById("estado").value = estado;
     }
 
-    // --- LIMPIAR ---
+    // --- Limpiar ---
     function limpiar() {
         productoSeleccionado = null;
         document.querySelectorAll(".form input").forEach(i => i.value = "");
         document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
     }
 
-    // --- AGREGAR (POST) ---
+    // --- agregar---
     async function agregar() {
         const producto = {
             nombreProducto: document.getElementById("nombreProducto").value,
@@ -139,7 +139,7 @@
         };
 
         if(!producto.nombreProducto || isNaN(producto.precio)) {
-            alert("⚠️ Nombre y Precio son obligatorios");
+            alert(" Nombre y Precio son obligatorios");
             return;
         }
 
@@ -156,7 +156,7 @@
     // --- EDITAR (PUT) ---
     async function editar() {
         if (!productoSeleccionado) {
-            alert("⚠️ Selecciona un producto de la tabla");
+            alert("Selecciona un producto de la tabla");
             return;
         }
 
@@ -181,7 +181,7 @@
     // --- ELIMINAR (DELETE) ---
     async function eliminar() {
         if (!productoSeleccionado) {
-            alert("⚠️ Selecciona un producto para eliminar");
+            alert(" Selecciona un producto para eliminar");
             return;
         }
 

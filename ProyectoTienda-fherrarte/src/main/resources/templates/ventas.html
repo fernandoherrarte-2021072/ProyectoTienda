@@ -74,7 +74,7 @@
 <script>
     let ventaSeleccionada = null;
 
-    // --- LISTAR ---
+    // --- Listar ---
     async function cargar() {
         try {
             const res = await fetch("/api/ventas");
@@ -105,7 +105,7 @@
         }
     }
 
-    // --- SELECCIONAR ---
+    // --- Seleccionar ---
     function seleccionar(elemento, id, fecha, total, estado, dpi, usuario) {
         document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
         elemento.classList.add("selected-row");
@@ -118,14 +118,14 @@
         document.getElementById("codigoUsuario").value = usuario;
     }
 
-    // --- LIMPIAR ---
+    // --- Limpiar ---
     function limpiar() {
         ventaSeleccionada = null;
         document.querySelectorAll(".form input").forEach(i => i.value = "");
         document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
     }
 
-    // --- AGREGAR (POST) ---
+    // --- agregar ---
     async function agregar() {
         const venta = {
             fechaVenta: document.getElementById("fechaVenta").value,
@@ -136,7 +136,7 @@
         };
 
         if(!venta.fechaVenta || !venta.total) {
-            alert("⚠️ Por favor completa la fecha y el total");
+            alert("Por favor completa la fecha y el total");
             return;
         }
 
@@ -150,10 +150,10 @@
         cargar();
     }
 
-    // --- EDITAR (PUT) ---
+    // --- Editar ---
     async function editar() {
         if (!ventaSeleccionada) {
-            alert("⚠️ Selecciona una venta de la tabla");
+            alert("Selecciona una venta de la tabla");
             return;
         }
 
@@ -176,10 +176,10 @@
         cargar();
     }
 
-    // --- ELIMINAR (DELETE) ---
+    // --- eliminar ---
     async function eliminar() {
         if (!ventaSeleccionada) {
-            alert("⚠️ Selecciona una venta para eliminar");
+            alert("Selecciona una venta para eliminar");
             return;
         }
 
