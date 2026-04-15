@@ -1,63 +1,156 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Gestión de Usuarios - Tienda</title>
-  <link rel="stylesheet" th:href="@{/css/entidades.css}">
+  <title>Usuarios</title>
+  <link rel="stylesheet" href="/css/entidades.css">
 </head>
 <body>
-<nav class="navbar">
-  <div class="nav-logo">Tienda - Usuarios</div>
-  <div>
-    <a th:href="@{/home}" style="color: white; margin-right: 15px; text-decoration: none;">Volver al Home</a>
-    <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
-  </div>
-</nav>
 
 <div class="container">
-  <h1>Control de Usuarios</h1>
 
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <p>Administración de cuentas y roles del sistema</p>
-    <a href="#" class="btn-add">Nuevo Usuario</a>
+  <h2>Gestión de Usuarios</h2>
+
+  <!-- FORMULARIO -->
+  <div class="form">
+    <input id="codigoUsuario" type="number" placeholder="Código (solo editar)">
+    <input id="usuario" type="text" placeholder="Usuario">
+    <input id="password" type="password" placeholder="Contraseña">
+    <input id="rol" type="text" placeholder="Rol (ADMIN / VENDEDOR)">
+    <input id="estado" type="number" placeholder="Estado (1=Activo)">
+
+    <div style="margin-top:10px">
+      <button class="btn-add" onclick="agregar()">Agregar</button>
+      <button class="btn-edit" onclick="editar()">Editar</button>
+      <button class="btn-delete" onclick="eliminar()">Eliminar</button>
+      <button onclick="limpiar()">Limpiar</button>
+    </div>
   </div>
 
+  <hr>
+
+  <!-- TABLA -->
   <table>
     <thead>
     <tr>
       <th>Código</th>
-      <th>Username</th>
-      <th>Email</th>
+      <th>Usuario</th>
       <th>Rol</th>
       <th>Estado</th>
-      <th>Acciones</th>
     </tr>
     </thead>
-    <tbody>
-    <tr>
-      <td>1</td>
-      <td>admin</td>
-      <td>admin@tienda.com</td>
-      <td>ADMINISTRADOR</td>
-      <td><span style="color: green;">Activo</span></td>
-      <td>
-        <a href="#" class="btn-edit">Editar</a>
-        <a href="#" class="btn-delete">Eliminar</a>
-      </td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>vendedor01</td>
-      <td>vendedor@tienda.com</td>
-      <td>VENDEDOR</td>
-      <td><span style="color: green;">Activo</span></td>
-      <td>
-        <a href="#" class="btn-edit">Editar</a>
-        <a href="#" class="btn-delete">Eliminar</a>
-      </td>
-    </tr>
-    </tbody>
+    <tbody id="tabla"></tbody>
   </table>
+
+  <br>
+  /homeVolver al Home</a>
+
 </div>
+
+<script>
+  let usuarioSeleccionado = null;
+
+  // LISTAR
+  async function cargar() {
+      const res = await fetch("/api/usuarios");
+      const data = await res.json();
+
+      const tabla = document.getElementById("tabla");
+      tabla.innerHTML = "";
+
+      data.forEach(u => {
+          tabla.innerHTML += `
+              <tr onclick="seleccionar(${u.codigoUsuario},
+                                       '${u.usuario}',
+                                       '${u.password}',
+                                       '${u.rol}',
+                                       ${u.estado})"
+                  style="cursor:pointer">
+                  <td>${u.codigoUsuario}</td>
+                  <td>${u.usuario}</td>
+                  <td>${u.rol}</td>
+                  <td>${u.estado == 1 ? 'Activo' : 'Inactivo'}</td>
+              </tr>
+          `;
+      });
+  }
+
+  function seleccionar(id, usuario, password, rol, estado) {
+      usuarioSeleccionado = id;
+      document.getElementById("codigoUsuario").value = id;
+      document.getElementById("usuario").value = usuario;
+      document.getElementById("password").value = password;
+      document.getElementById("rol").value = rol;
+      document.getElementById("estado").value = estado;
+  }
+
+  function limpiar() {
+      usuarioSeleccionado = null;
+      document.querySelectorAll(".form input").forEach(i => i.value = "");
+  }
+
+  // POST
+  async function agregar() {
+      const user = {
+          usuario: document.getElementById("usuario").value,
+          password: document.getElementById("password").value,
+          rol: document.getElementById("rol").value,
+          estado: document.getElementById("estado").value
+      };
+
+      await fetch("/api/usuarios", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+      });
+
+      limpiar();
+      cargar();
+  }
+
+  // PUT
+  async function editar() {
+      if (!usuarioSeleccionado) {
+          alert("Selecciona un usuario");
+          return;
+      }
+
+      const user = {
+          codigoUsuario: usuarioSeleccionado,
+          usuario: document.getElementById("usuario").value,
+          password: document.getElementById("password").value,
+          rol: document.getElementById("rol").value,
+          estado: document.getElementById("estado").value
+      };
+
+      await fetch(`/api/usuarios/${usuarioSeleccionado}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(user)
+      });
+
+      limpiar();
+      cargar();
+  }
+
+  // DELETE
+  async function eliminar() {
+      if (!usuarioSeleccionado) {
+          alert("Selecciona un usuario");
+          return;
+      }
+
+      if (confirm("¿Eliminar usuario?")) {
+          await fetch(`/api/usuarios/${usuarioSeleccionado}`, {
+              method: "DELETE"
+          });
+          limpiar();
+          cargar();
+      }
+  }
+
+  cargar();
+</script>
+
 </body>
 </html>
