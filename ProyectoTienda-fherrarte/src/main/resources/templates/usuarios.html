@@ -1,33 +1,56 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Usuarios</title>
-  <link rel="stylesheet" href="/css/entidades.css">
+  <title>Gestión de Usuarios | Sistema de Ventas</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/css/entidades.css?v=2.2}">
+
+  <style>
+    .selected-row {
+        background-color: #2d3a54 !important;
+        border-color: var(--accent-blue) !important;
+        transform: scale(1.01);
+    }
+
+    tr { transition: all 0.2s ease; }
+
+    /* Estilos para los roles y estados */
+    .badge {
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .badge-active { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; }
+    .badge-inactive { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+  </style>
 </head>
 <body>
 
 <div class="container">
-
   <h2>Gestión de Usuarios</h2>
 
   <div class="form">
-    <input id="codigoUsuario" type="number" placeholder="Código (solo editar)" readonly>
-    <input id="usuario" type="text" placeholder="Usuario">
+    <input id="codigoUsuario" type="number" placeholder="ID (Autogenerado)" readonly style="opacity: 0.6; cursor: not-allowed;">
+    <input id="usuario" type="text" placeholder="Nombre de Usuario">
     <input id="password" type="password" placeholder="Contraseña">
-    <input id="email" type="email" placeholder="Email">
+    <input id="email" type="email" placeholder="Email institucional">
     <input id="rol" type="text" placeholder="Rol (ADMIN / VENDEDOR)">
-    <input id="estado" type="number" placeholder="Estado (1=Activo)">
+    <input id="estado" type="number" placeholder="Estado (1=Activo / 0=Inactivo)">
 
-    <div style="margin-top:10px">
+    <div class="form-actions">
       <button class="btn-add" onclick="agregar()">Agregar</button>
       <button class="btn-edit" onclick="editar()">Editar</button>
       <button class="btn-delete" onclick="eliminar()">Eliminar</button>
-      <button onclick="limpiar()">Limpiar</button>
+      <button type="button" onclick="limpiar()">Limpiar</button>
     </div>
   </div>
-
-  <hr>
 
   <table>
     <thead>
@@ -39,45 +62,59 @@
       <th>Estado</th>
     </tr>
     </thead>
-    <tbody id="tabla"></tbody>
+    <tbody id="tabla">
+    </tbody>
   </table>
 
-  <br>
-  <a href="/home">Volver al Home</a>
-
+  <div style="margin-top: 40px; text-align: center;">
+    <a th:href="@{/home}" style="color: var(--accent-blue); text-decoration: none; font-weight: 700; font-family: 'Plus Jakarta Sans';">
+      ← Volver al Panel Principal
+    </a>
+  </div>
 </div>
 
 <script>
   let usuarioSeleccionado = null;
 
-  // LISTAR
+  // --- LISTAR ---
   async function cargar() {
-      const res = await fetch("/api/usuarios");
-      const data = await res.json();
+      try {
+          const res = await fetch("/api/usuarios");
+          const data = await res.json();
 
-      const tabla = document.getElementById("tabla");
-      tabla.innerHTML = "";
+          const tabla = document.getElementById("tabla");
+          tabla.innerHTML = "";
 
-      data.forEach(u => {
-          tabla.innerHTML += `
-              <tr onclick="seleccionar(${u.codigoUsuario},
-                                       '${u.username}',
-                                       '${u.password}',
-                                       '${u.email}',
-                                       '${u.rol}',
-                                       ${u.estado})"
-                  style="cursor:pointer">
-                  <td>${u.codigoUsuario}</td>
-                  <td>${u.username}</td>
+          data.forEach(u => {
+              const tr = document.createElement("tr");
+              tr.style.cursor = "pointer";
+              tr.onclick = function() {
+                  seleccionar(this, u.codigoUsuario, u.username, u.password, u.email, u.rol, u.estado);
+              };
+
+              const estadoBadge = u.estado == 1
+                  ? '<span class="badge badge-active">Activo</span>'
+                  : '<span class="badge badge-inactive">Inactivo</span>';
+
+              tr.innerHTML = `
+                  <td>#${u.codigoUsuario}</td>
+                  <td><strong>${u.username}</strong></td>
                   <td>${u.email}</td>
-                  <td>${u.rol}</td>
-                  <td>${u.estado == 1 ? 'Activo' : 'Inactivo'}</td>
-              </tr>
-          `;
-      });
+                  <td style="color: var(--text-muted)">${u.rol}</td>
+                  <td>${estadoBadge}</td>
+              `;
+              tabla.appendChild(tr);
+          });
+      } catch (error) {
+          console.error("Error al cargar usuarios:", error);
+      }
   }
 
-  function seleccionar(id, username, password, email, rol, estado) {
+  // --- SELECCIONAR ---
+  function seleccionar(elemento, id, username, password, email, rol, estado) {
+      document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
+      elemento.classList.add("selected-row");
+
       usuarioSeleccionado = id;
       document.getElementById("codigoUsuario").value = id;
       document.getElementById("usuario").value = username;
@@ -87,20 +124,27 @@
       document.getElementById("estado").value = estado;
   }
 
+  // --- LIMPIAR ---
   function limpiar() {
       usuarioSeleccionado = null;
       document.querySelectorAll(".form input").forEach(i => i.value = "");
+      document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
   }
 
-  // POST (CREAR)
+  // --- AGREGAR (POST) ---
   async function agregar() {
       const user = {
           username: document.getElementById("usuario").value,
           password: document.getElementById("password").value,
           email: document.getElementById("email").value,
           rol: document.getElementById("rol").value,
-          estado: parseInt(document.getElementById("estado").value)
+          estado: parseInt(document.getElementById("estado").value || 1)
       };
+
+      if(!user.username || !user.password) {
+          alert("⚠️ Usuario y Contraseña son campos obligatorios");
+          return;
+      }
 
       await fetch("/api/usuarios", {
           method: "POST",
@@ -112,10 +156,10 @@
       cargar();
   }
 
-  // PUT (ACTUALIZAR)
+  // --- EDITAR (PUT) ---
   async function editar() {
       if (!usuarioSeleccionado) {
-          alert("Selecciona un usuario");
+          alert("⚠️ Selecciona un usuario de la tabla para editar");
           return;
       }
 
@@ -138,14 +182,14 @@
       cargar();
   }
 
-  // DELETE (ELIMINAR)
+  // --- ELIMINAR (DELETE) ---
   async function eliminar() {
       if (!usuarioSeleccionado) {
-          alert("Selecciona un usuario");
+          alert("⚠️ Selecciona un usuario para eliminar");
           return;
       }
 
-      if (confirm("¿Eliminar usuario?")) {
+      if (confirm(`¿Estás seguro de eliminar al usuario: ${document.getElementById("usuario").value}?`)) {
           await fetch(`/api/usuarios/${usuarioSeleccionado}`, {
               method: "DELETE"
           });

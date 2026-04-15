@@ -1,35 +1,54 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Ventas</title>
-    <link rel="stylesheet" href="/css/entidades.css">
+    <title>Gestión de Ventas | Sistema de Ventas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/entidades.css?v=2.2}">
+
+    <style>
+        .selected-row {
+            background-color: #2d3a54 !important;
+            border-color: var(--accent-blue) !important;
+            transform: scale(1.01);
+        }
+
+        tr { transition: all 0.2s ease; }
+
+        /* Estilo para el input de fecha en modo oscuro */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-
     <h2>Gestión de Ventas</h2>
 
-    <!-- FORMULARIO -->
     <div class="form">
-        <input id="fechaVenta" type="date" placeholder="Fecha">
-        <input id="total" type="number" step="0.01" placeholder="Total">
-        <input id="estado" type="number" placeholder="Estado">
+        <div class="input-group-custom">
+            <label style="color: var(--text-muted); font-size: 0.7rem; font-weight: 700; margin-left: 5px;">FECHA DE VENTA</label>
+            <input id="fechaVenta" type="date">
+        </div>
+        <input id="total" type="number" step="0.01" placeholder="Total (0.00)">
+        <input id="estado" type="number" placeholder="Estado (1/0)">
         <input id="dpiCliente" type="number" placeholder="DPI Cliente">
         <input id="codigoUsuario" type="number" placeholder="Código Usuario">
 
-        <div style="margin-top:10px">
+        <div class="form-actions">
             <button class="btn-add" onclick="agregar()">Agregar</button>
             <button class="btn-edit" onclick="editar()">Editar</button>
             <button class="btn-delete" onclick="eliminar()">Eliminar</button>
-            <button onclick="limpiar()">Limpiar</button>
+            <button type="button" onclick="limpiar()">Limpiar</button>
         </div>
     </div>
 
-    <hr>
-
-    <!-- TABLA -->
     <table>
         <thead>
         <tr>
@@ -38,49 +57,59 @@
             <th>Total</th>
             <th>Estado</th>
             <th>DPI Cliente</th>
-            <th>Código Usuario</th>
+            <th>Usuario</th>
         </tr>
         </thead>
-        <tbody id="tabla"></tbody>
+        <tbody id="tabla">
+        </tbody>
     </table>
 
-    <br>
-    <a href="/home">Volver al Home</a>
-
+    <div style="margin-top: 40px; text-align: center;">
+        <a th:href="@{/home}" style="color: var(--accent-blue); text-decoration: none; font-weight: 700; font-family: 'Plus Jakarta Sans';">
+            ← Volver al Panel Principal
+        </a>
+    </div>
 </div>
 
 <script>
     let ventaSeleccionada = null;
 
-    // LISTAR
+    // --- LISTAR ---
     async function cargar() {
-        const res = await fetch("/api/ventas");
-        const data = await res.json();
+        try {
+            const res = await fetch("/api/ventas");
+            const data = await res.json();
 
-        const tabla = document.getElementById("tabla");
-        tabla.innerHTML = "";
+            const tabla = document.getElementById("tabla");
+            tabla.innerHTML = "";
 
-        data.forEach(v => {
-            tabla.innerHTML += `
-                <tr onclick="seleccionar(${v.codigoVenta},
-                                         '${v.fechaVenta}',
-                                         ${v.total},
-                                         ${v.estado},
-                                         ${v.dpiCliente},
-                                         ${v.codigoUsuario})"
-                    style="cursor:pointer">
+            data.forEach(v => {
+                const tr = document.createElement("tr");
+                tr.style.cursor = "pointer";
+                tr.onclick = function() {
+                    seleccionar(this, v.codigoVenta, v.fechaVenta, v.total, v.estado, v.dpiCliente, v.codigoUsuario);
+                };
+
+                tr.innerHTML = `
                     <td>${v.codigoVenta}</td>
                     <td>${v.fechaVenta}</td>
-                    <td>${v.total}</td>
+                    <td>Q ${parseFloat(v.total).toFixed(2)}</td>
                     <td>${v.estado}</td>
                     <td>${v.dpiCliente}</td>
                     <td>${v.codigoUsuario}</td>
-                </tr>
-            `;
-        });
+                `;
+                tabla.appendChild(tr);
+            });
+        } catch (error) {
+            console.error("Error al cargar ventas:", error);
+        }
     }
 
-    function seleccionar(id, fecha, total, estado, dpi, usuario) {
+    // --- SELECCIONAR ---
+    function seleccionar(elemento, id, fecha, total, estado, dpi, usuario) {
+        document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
+        elemento.classList.add("selected-row");
+
         ventaSeleccionada = id;
         document.getElementById("fechaVenta").value = fecha;
         document.getElementById("total").value = total;
@@ -89,36 +118,42 @@
         document.getElementById("codigoUsuario").value = usuario;
     }
 
+    // --- LIMPIAR ---
     function limpiar() {
         ventaSeleccionada = null;
         document.querySelectorAll(".form input").forEach(i => i.value = "");
+        document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
     }
 
-    // POST
+    // --- AGREGAR (POST) ---
     async function agregar() {
-    const venta = {
-        fechaVenta: document.getElementById("fechaVenta").value,
-        total: document.getElementById("total").value,
-        estado: document.getElementById("estado").value,
-        dpiCliente: document.getElementById("dpiCliente").value,
-        codigoUsuario: 1   // 🔴 FIX TEMPORAL
-    };
+        const venta = {
+            fechaVenta: document.getElementById("fechaVenta").value,
+            total: document.getElementById("total").value,
+            estado: document.getElementById("estado").value,
+            dpiCliente: document.getElementById("dpiCliente").value,
+            codigoUsuario: document.getElementById("codigoUsuario").value || 1 // Mantiene el fallback si está vacío
+        };
 
-    await fetch("/api/ventas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(venta)
-    });
+        if(!venta.fechaVenta || !venta.total) {
+            alert("⚠️ Por favor completa la fecha y el total");
+            return;
+        }
 
-    limpiar();
-    cargar();
-}
+        await fetch("/api/ventas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(venta)
+        });
 
+        limpiar();
+        cargar();
+    }
 
-    // PUT
+    // --- EDITAR (PUT) ---
     async function editar() {
         if (!ventaSeleccionada) {
-            alert("Selecciona una venta");
+            alert("⚠️ Selecciona una venta de la tabla");
             return;
         }
 
@@ -141,14 +176,14 @@
         cargar();
     }
 
-    // DELETE
+    // --- ELIMINAR (DELETE) ---
     async function eliminar() {
         if (!ventaSeleccionada) {
-            alert("Selecciona una venta");
+            alert("⚠️ Selecciona una venta para eliminar");
             return;
         }
 
-        if (confirm("¿Eliminar venta?")) {
+        if (confirm(`¿Eliminar venta ID: ${ventaSeleccionada}?`)) {
             await fetch(`/api/ventas/${ventaSeleccionada}`, {
                 method: "DELETE"
             });
@@ -157,10 +192,8 @@
         }
     }
 
-    // Inicial
     cargar();
 </script>
 
 </body>
 </html>
-``

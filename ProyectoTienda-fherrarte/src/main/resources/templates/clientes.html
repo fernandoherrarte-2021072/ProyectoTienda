@@ -2,13 +2,30 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Clientes</title>
-    <link rel="stylesheet" th:href="@{/css/entidades.css}">
+    <title>Gestión de Clientes | Sistema de Ventas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/entidades.css?v=2.2}">
+
+    <style>
+        /* Estilos adicionales para asegurar que el Script y la Tabla luzcan bien */
+        .selected-row {
+            background-color: #2d3a54 !important;
+            border-color: var(--accent-blue) !important;
+            transform: scale(1.01);
+        }
+
+        tr {
+            transition: all 0.2s ease;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-
     <h2>Gestión de Clientes</h2>
 
     <div class="form">
@@ -18,15 +35,13 @@
         <input id="direccion" type="text" placeholder="Dirección">
         <input id="estado" type="number" placeholder="Estado">
 
-        <div style="margin-top: 10px;">
+        <div class="form-actions">
             <button class="btn-add" onclick="agregar()">Agregar</button>
             <button class="btn-edit" onclick="editar()">Editar</button>
             <button class="btn-delete" onclick="eliminar()">Eliminar</button>
-            <button onclick="limpiar()">Limpiar</button>
+            <button type="button" onclick="limpiar()">Limpiar</button>
         </div>
     </div>
-
-    <hr>
 
     <table>
         <thead>
@@ -42,15 +57,17 @@
         </tbody>
     </table>
 
-    <br>
-    <a th:href="@{/home}">Volver al Home</a>
-
+    <div style="margin-top: 40px; text-align: center;">
+        <a th:href="@{/home}" style="color: #3b82f6; text-decoration: none; font-weight: 700; font-family: 'Plus Jakarta Sans';">
+            ← Volver al Panel Principal
+        </a>
+    </div>
 </div>
 
 <script>
     let dpiSeleccionado = null;
 
-    // LISTAR
+    // --- LISTAR CLIENTES ---
     async function cargar() {
         try {
             const res = await fetch("/api/clientes");
@@ -60,23 +77,33 @@
             tabla.innerHTML = "";
 
             data.forEach(c => {
-                // Se agregaron comillas escapadas para los strings en la función seleccionar
-                tabla.innerHTML += `
-                    <tr onclick="seleccionar('${c.dpiCliente}', '${c.nombreCliente}', '${c.apellidoCliente}', '${c.direccion}', '${c.estado}')" style="cursor:pointer">
-                        <td>${c.dpiCliente}</td>
-                        <td>${c.nombreCliente}</td>
-                        <td>${c.apellidoCliente}</td>
-                        <td>${c.direccion}</td>
-                        <td>${c.estado}</td>
-                    </tr>
+                const tr = document.createElement("tr");
+                tr.style.cursor = "pointer";
+                // Usamos dataset para guardar el ID de forma limpia
+                tr.setAttribute("onclick", `seleccionar(this, '${c.dpiCliente}', '${c.nombreCliente}', '${c.apellidoCliente}', '${c.direccion}', '${c.estado}')`);
+
+                tr.innerHTML = `
+                    <td>${c.dpiCliente}</td>
+                    <td>${c.nombreCliente}</td>
+                    <td>${c.apellidoCliente}</td>
+                    <td>${c.direccion}</td>
+                    <td><span class="status-badge">${c.estado}</span></td>
                 `;
+                tabla.appendChild(tr);
             });
         } catch (error) {
             console.error("Error al cargar clientes:", error);
         }
     }
 
-    function seleccionar(dpi, nombre, apellido, direccion, estado) {
+    // --- SELECCIONAR FILA ---
+    function seleccionar(elemento, dpi, nombre, apellido, direccion, estado) {
+        // Quitar clase de selección a otras filas
+        document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
+
+        // Añadir clase a la fila actual
+        elemento.classList.add("selected-row");
+
         dpiSeleccionado = dpi;
         document.getElementById("dpiCliente").value = dpi;
         document.getElementById("nombreCliente").value = nombre;
@@ -85,12 +112,14 @@
         document.getElementById("estado").value = estado;
     }
 
+    // --- LIMPIAR FORMULARIO ---
     function limpiar() {
         dpiSeleccionado = null;
         document.querySelectorAll(".form input").forEach(i => i.value = "");
+        document.querySelectorAll("tr").forEach(row => row.classList.remove("selected-row"));
     }
 
-    // POST
+    // --- AGREGAR (POST) ---
     async function agregar() {
         const cliente = {
             dpiCliente: document.getElementById("dpiCliente").value,
@@ -99,6 +128,11 @@
             direccion: document.getElementById("direccion").value,
             estado: document.getElementById("estado").value
         };
+
+        if(!cliente.dpiCliente || !cliente.nombreCliente) {
+            alert("Por favor completa los campos principales");
+            return;
+        }
 
         await fetch("/api/clientes", {
             method: "POST",
@@ -110,10 +144,10 @@
         cargar();
     }
 
-    // PUT
+    // --- EDITAR (PUT) ---
     async function editar() {
         if (!dpiSeleccionado) {
-            alert("Selecciona un cliente de la tabla");
+            alert("⚠️ Selecciona un cliente de la tabla para editar");
             return;
         }
 
@@ -135,14 +169,14 @@
         cargar();
     }
 
-    // DELETE
+    // --- ELIMINAR (DELETE) ---
     async function eliminar() {
         if (!dpiSeleccionado) {
-            alert("Selecciona un cliente");
+            alert("⚠️ Selecciona un cliente para eliminar");
             return;
         }
 
-        if (confirm("¿Seguro que deseas eliminar este cliente?")) {
+        if (confirm(`¿Estás seguro de eliminar al cliente con DPI: ${dpiSeleccionado}?`)) {
             await fetch(`/api/clientes/${dpiSeleccionado}`, {
                 method: "DELETE"
             });
@@ -151,7 +185,7 @@
         }
     }
 
-    // Carga inicial
+    // Carga inicial al abrir la página
     cargar();
 </script>
 
