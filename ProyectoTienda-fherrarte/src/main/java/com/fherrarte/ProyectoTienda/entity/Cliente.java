@@ -8,7 +8,7 @@ public class Cliente {
 
     @Id
     @Column(name = "dpi_cliente")
-    private Integer dpiCliente;
+    private String dpiCliente; // Cambiado de Integer a String
 
     @Column(name = "nombre_cliente")
     private String nombreCliente;
@@ -22,12 +22,12 @@ public class Cliente {
     @Column(name = "estado")
     private Integer estado;
 
-
-    public Integer getDpiCliente() {
+    // Getters y Setters actualizados
+    public String getDpiCliente() {
         return dpiCliente;
     }
 
-    public void setDpiCliente(Integer dpiCliente) {
+    public void setDpiCliente(String dpiCliente) {
         this.dpiCliente = dpiCliente;
     }
 
