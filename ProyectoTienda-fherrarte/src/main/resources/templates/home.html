@@ -57,7 +57,7 @@
             <a th:href="@{/detalles}" class="btn-manage">Gestionar</a>
         </div>
 
-        <div class="card">
+        <div class="card" th:if="${session.rol == 'ADMIN'}">
             <img th:src="@{/img/Usuarios.png}" alt="Usuarios" class="card-icon">
             <h3>Usuarios</h3>
             <p>Administración de accesos, roles y perfiles.</p>
