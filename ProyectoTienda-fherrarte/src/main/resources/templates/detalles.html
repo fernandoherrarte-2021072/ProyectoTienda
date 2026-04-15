@@ -1,66 +1,182 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Detalles de Venta - Tienda</title>
-  <link rel="stylesheet" th:href="@{/css/entidades.css}">
+  <title>Detalle de Ventas</title>
+  <link rel="stylesheet" href="/css/entidades.css">
 </head>
 <body>
-<nav class="navbar">
-  <div class="nav-logo">Tienda - Detalles</div>
-  <div>
-    <a th:href="@{/home}" style="color: white; margin-right: 15px; text-decoration: none;">Volver al Home</a>
-    <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
-  </div>
-</nav>
 
 <div class="container">
-  <h1>Detalle de Ventas</h1>
+  <h2>Detalle de Ventas</h2>
 
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <p>Desglose de artículos por cada transacción</p>
-    <a href="#" class="btn-add">Nuevo Detalle</a>
+  <!-- FORMULARIO -->
+  <div class="form">
+    <input id="codigoDetalle" type="number" placeholder="ID Detalle (solo editar)" readonly>
+    <input id="codigoVenta" type="number" placeholder="Venta #">
+    <input id="codigoProducto" type="number" placeholder="Producto #">
+    <input id="cantidad" type="number" placeholder="Cantidad">
+    <input id="precioUnitario" type="number" step="0.01" placeholder="Precio Unitario">
+
+    <div style="margin-top:10px">
+      <button type="button" class="btn-add" onclick="agregar()">Agregar</button>
+      <button type="button" class="btn-edit" onclick="editar()">Editar</button>
+      <button type="button" class="btn-delete" onclick="eliminar()">Eliminar</button>
+      <button type="button" onclick="limpiar()">Limpiar</button>
+    </div>
   </div>
 
+  <hr>
+
+  <!-- TABLA -->
   <table>
     <thead>
     <tr>
-      <th>ID Detalle</th>
-      <th>Venta #</th>
-      <th>Producto #</th>
+      <th>ID</th>
+      <th>Venta</th>
+      <th>Producto</th>
       <th>Cantidad</th>
       <th>Precio Unit.</th>
       <th>Subtotal</th>
-      <th>Acciones</th>
     </tr>
     </thead>
-    <tbody>
-    <tr>
-      <td>501</td>
-      <td>1001</td>
-      <td>1 (Laptop)</td>
-      <td>1</td>
-      <td>Q 12,500.00</td>
-      <td>Q 12,500.00</td>
-      <td>
-        <a href="#" class="btn-edit">Editar</a>
-        <a href="#" class="btn-delete">Eliminar</a>
-      </td>
-    </tr>
-    <tr>
-      <td>502</td>
-      <td>1001</td>
-      <td>2 (Mouse)</td>
-      <td>2</td>
-      <td>Q 250.00</td>
-      <td>Q 500.00</td>
-      <td>
-        <a href="#" class="btn-edit">Editar</a>
-        <a href="#" class="btn-delete">Eliminar</a>
-      </td>
-    </tr>
-    </tbody>
+    <tbody id="tabla"></tbody>
   </table>
+
+  <br>
+  <a href="/home">Volver al Home</a>
 </div>
+
+<script>
+  let detalleSeleccionado = null;
+
+  const inpDetalle  = document.getElementById("codigoDetalle");
+  const inpVenta    = document.getElementById("codigoVenta");
+  const inpProducto = document.getElementById("codigoProducto");
+  const inpCantidad = document.getElementById("cantidad");
+  const inpPrecio   = document.getElementById("precioUnitario");
+
+  // LISTAR
+  async function cargar() {
+      const res = await fetch("/api/detalle-ventas");
+      const data = await res.json();
+
+      const tabla = document.getElementById("tabla");
+      tabla.innerHTML = "";
+
+      data.forEach(d => {
+          tabla.innerHTML += `
+              <tr onclick="seleccionar(${d.codigoDetalleVenta},
+                                       ${d.codigoVenta},
+                                       ${d.codigoProducto},
+                                       ${d.cantidad},
+                                       ${d.precioUnitario})"
+                  style="cursor:pointer">
+                  <td>${d.codigoDetalleVenta}</td>
+                  <td>${d.codigoVenta}</td>
+                  <td>${d.codigoProducto}</td>
+                  <td>${d.cantidad}</td>
+                  <td>${d.precioUnitario}</td>
+                  <td>${d.subtotal}</td>
+              </tr>
+          `;
+      });
+  }
+
+  // SELECCIONAR
+  function seleccionar(id, venta, producto, cantidad, precio) {
+      detalleSeleccionado = id;
+      inpDetalle.value = id;
+      inpVenta.value = venta;
+      inpProducto.value = producto;
+      inpCantidad.value = cantidad;
+      inpPrecio.value = precio;
+  }
+
+  // AGREGAR
+  async function agregar() {
+      alert("✅ SÍ LLEGÓ AL BOTÓN AGREGAR");
+
+      const detalle = {
+          codigoVenta: parseInt(inpVenta.value),
+          codigoProducto: parseInt(inpProducto.value),
+          cantidad: parseInt(inpCantidad.value),
+          precioUnitario: parseFloat(inpPrecio.value)
+      };
+
+      console.log("Enviando detalle:", detalle);
+
+      const response = await fetch("/api/detalle-ventas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(detalle)
+      });
+
+      if (!response.ok) {
+          const txt = await response.text();
+          alert("❌ Error al guardar detalle:\n" + txt);
+          return;
+      }
+
+      alert("✅ Detalle guardado correctamente");
+      limpiar();
+      cargar();
+  }
+
+  // EDITAR
+  async function editar() {
+      if (!detalleSeleccionado) {
+          alert("Selecciona un detalle");
+          return;
+      }
+
+      const detalle = {
+          codigoDetalleVenta: detalleSeleccionado,
+          codigoVenta: parseInt(inpVenta.value),
+          codigoProducto: parseInt(inpProducto.value),
+          cantidad: parseInt(inpCantidad.value),
+          precioUnitario: parseFloat(inpPrecio.value)
+      };
+
+      await fetch(`/api/detalle-ventas/${detalleSeleccionado}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(detalle)
+      });
+
+      limpiar();
+      cargar();
+  }
+
+  // ELIMINAR
+  async function eliminar() {
+      if (!detalleSeleccionado) {
+          alert("Selecciona un detalle");
+          return;
+      }
+
+      if (confirm("¿Eliminar detalle?")) {
+          await fetch(`/api/detalle-ventas/${detalleSeleccionado}`, {
+              method: "DELETE"
+          });
+          limpiar();
+          cargar();
+      }
+  }
+
+  // LIMPIAR
+  function limpiar() {
+      detalleSeleccionado = null;
+      inpDetalle.value = "";
+      inpVenta.value = "";
+      inpProducto.value = "";
+      inpCantidad.value = "";
+      inpPrecio.value = "";
+  }
+
+  // CARGA INICIAL
+  cargar();
+</script>
+
 </body>
 </html>
