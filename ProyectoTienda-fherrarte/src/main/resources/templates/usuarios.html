@@ -11,11 +11,11 @@
 
   <h2>Gestión de Usuarios</h2>
 
-  <!-- FORMULARIO -->
   <div class="form">
-    <input id="codigoUsuario" type="number" placeholder="Código (solo editar)">
+    <input id="codigoUsuario" type="number" placeholder="Código (solo editar)" readonly>
     <input id="usuario" type="text" placeholder="Usuario">
     <input id="password" type="password" placeholder="Contraseña">
+    <input id="email" type="email" placeholder="Email">
     <input id="rol" type="text" placeholder="Rol (ADMIN / VENDEDOR)">
     <input id="estado" type="number" placeholder="Estado (1=Activo)">
 
@@ -29,12 +29,12 @@
 
   <hr>
 
-  <!-- TABLA -->
   <table>
     <thead>
     <tr>
       <th>Código</th>
       <th>Usuario</th>
+      <th>Email</th>
       <th>Rol</th>
       <th>Estado</th>
     </tr>
@@ -43,7 +43,7 @@
   </table>
 
   <br>
-  /homeVolver al Home</a>
+  <a href="/home">Volver al Home</a>
 
 </div>
 
@@ -61,13 +61,15 @@
       data.forEach(u => {
           tabla.innerHTML += `
               <tr onclick="seleccionar(${u.codigoUsuario},
-                                       '${u.usuario}',
+                                       '${u.username}',
                                        '${u.password}',
+                                       '${u.email}',
                                        '${u.rol}',
                                        ${u.estado})"
                   style="cursor:pointer">
                   <td>${u.codigoUsuario}</td>
-                  <td>${u.usuario}</td>
+                  <td>${u.username}</td>
+                  <td>${u.email}</td>
                   <td>${u.rol}</td>
                   <td>${u.estado == 1 ? 'Activo' : 'Inactivo'}</td>
               </tr>
@@ -75,11 +77,12 @@
       });
   }
 
-  function seleccionar(id, usuario, password, rol, estado) {
+  function seleccionar(id, username, password, email, rol, estado) {
       usuarioSeleccionado = id;
       document.getElementById("codigoUsuario").value = id;
-      document.getElementById("usuario").value = usuario;
+      document.getElementById("usuario").value = username;
       document.getElementById("password").value = password;
+      document.getElementById("email").value = email;
       document.getElementById("rol").value = rol;
       document.getElementById("estado").value = estado;
   }
@@ -89,13 +92,14 @@
       document.querySelectorAll(".form input").forEach(i => i.value = "");
   }
 
-  // POST
+  // POST (CREAR)
   async function agregar() {
       const user = {
-          usuario: document.getElementById("usuario").value,
+          username: document.getElementById("usuario").value,
           password: document.getElementById("password").value,
+          email: document.getElementById("email").value,
           rol: document.getElementById("rol").value,
-          estado: document.getElementById("estado").value
+          estado: parseInt(document.getElementById("estado").value)
       };
 
       await fetch("/api/usuarios", {
@@ -108,7 +112,7 @@
       cargar();
   }
 
-  // PUT
+  // PUT (ACTUALIZAR)
   async function editar() {
       if (!usuarioSeleccionado) {
           alert("Selecciona un usuario");
@@ -117,10 +121,11 @@
 
       const user = {
           codigoUsuario: usuarioSeleccionado,
-          usuario: document.getElementById("usuario").value,
+          username: document.getElementById("usuario").value,
           password: document.getElementById("password").value,
+          email: document.getElementById("email").value,
           rol: document.getElementById("rol").value,
-          estado: document.getElementById("estado").value
+          estado: parseInt(document.getElementById("estado").value)
       };
 
       await fetch(`/api/usuarios/${usuarioSeleccionado}`, {
@@ -133,7 +138,7 @@
       cargar();
   }
 
-  // DELETE
+  // DELETE (ELIMINAR)
   async function eliminar() {
       if (!usuarioSeleccionado) {
           alert("Selecciona un usuario");
